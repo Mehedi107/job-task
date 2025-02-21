@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -58,6 +58,58 @@ async function run() {
 
         // Insert the new user
         const result = await userCollection.insertOne(userData);
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ error: error.message });
+      }
+    });
+
+    // Create a new task
+    app.post('/tasks', async (req, res) => {
+      try {
+        const result = await taskCollection.insertOne(req.body);
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ error: error.message });
+      }
+    });
+
+    // Get all tasks for a user
+    app.get('/tasks/:userEmail', async (req, res) => {
+      try {
+        const query = { email: req.params.userEmail };
+        const tasks = await taskCollection.find(query).toArray();
+        res.send(tasks);
+      } catch (error) {
+        res.status(500).send({ error: error.message });
+      }
+    });
+
+    // Update a task
+    app.patch('/tasks/:id', async (req, res) => {
+      try {
+        const { id } = req.params;
+        const filter = { _id: new ObjectId(id) };
+        const updateDoc = {
+          $set: {
+            title: req.body.title,
+            description: req.body.description,
+            category: req.body.category,
+          },
+        };
+        const result = await taskCollection.updateOne(filter, updateDoc);
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ message: 'Failed to update task', error });
+      }
+    });
+
+    // Delete a task
+    app.delete('/tasks/:taskId', async (req, res) => {
+      try {
+        const taskId = req.params.taskId;
+        const query = { _id: new ObjectId(taskId) };
+        const result = await taskCollection.deleteOne(query);
         res.send(result);
       } catch (error) {
         res.status(500).send({ error: error.message });

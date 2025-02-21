@@ -1,7 +1,17 @@
 import PropTypes from 'prop-types';
 import BtnGoogleLogin from '../buttons/BtnGoogleLogin';
+import { useContext, useEffect } from 'react';
+import AuthContext from '../../context/AuthContext';
 
 const LoginModal = ({ isOpen, onClose }) => {
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (user) {
+      onClose();
+    }
+  }, [user, onClose]);
+
   if (!isOpen) return null;
 
   return (
