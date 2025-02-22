@@ -91,11 +91,7 @@ async function run() {
         const { id } = req.params;
         const filter = { _id: new ObjectId(id) };
         const updateDoc = {
-          $set: {
-            title: req.body.title,
-            description: req.body.description,
-            category: req.body.category,
-          },
+          $set: req.body, // This allows updating any field that's sent in the request
         };
         const result = await taskCollection.updateOne(filter, updateDoc);
         res.send(result);

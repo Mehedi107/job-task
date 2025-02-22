@@ -37,40 +37,39 @@ const TaskModal = ({ isOpen, onClose, refetch, task }) => {
     };
 
     try {
-      let response;
-
       if (task?._id) {
-        // Update existing task (PUT request)
-        response = await axiosPublic.patch(`/tasks/${task._id}`, taskData);
+        // Update existing task
+        const response = await axiosPublic.patch(
+          `/tasks/${task._id}`,
+          taskData
+        );
+        console.log('Task updated:', response.data); // Log response
       } else {
-        // Create new task (POST request)
-        response = await axiosPublic.post('/tasks', taskData);
+        // Create new task
+        const response = await axiosPublic.post('/tasks', taskData);
+        console.log('Task created:', response.data); // Log response
       }
 
-      if (response?.data?.insertedId || response?.data.modifiedCount) {
-        refetch();
-        onClose();
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+      refetch();
+      onClose();
       setTitle('');
       setDescription('');
       setCategory('To-Do');
+    } catch (error) {
+      console.error('Error updating/creating task:', error); // Log error
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDelete = async taskId => {
-    setLoading(true);
+  const handleDelete = async () => {
+    if (!task?._id) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await axiosPublic.delete(`/tasks/${taskId}`);
-      if (response?.data?.deletedCount > 0) {
-        refetch();
-        onClose();
-      }
+      await axiosPublic.delete(`/tasks/${task._id}`);
+      refetch();
+      onClose();
     } catch (error) {
       console.error('Error deleting task:', error);
     } finally {
@@ -156,7 +155,7 @@ const TaskModal = ({ isOpen, onClose, refetch, task }) => {
           </button>
           {task && (
             <button
-              onClick={() => handleDelete(task?._id)}
+              onClick={handleDelete}
               className="w-full py-2 rounded-md transition duration-200 cursor-pointer bg-red-500 hover:bg-red-600 text-white flex justify-center items-center gap-2"
             >
               Delete
