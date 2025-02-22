@@ -1,4 +1,4 @@
-# Task Management Application
+# Donezo - The best way to get things done
 
 ## Description
 
@@ -6,8 +6,7 @@ This Task Management Application allows users to efficiently manage their tasks 
 
 ## Live Links
 
-- [Production Site](https://your-production-site.com)
-- [Development Preview](https://your-development-preview.com)
+- [Live Demo](https://donezo-a1732.web.app)
 
 ## Dependencies
 
